@@ -78,7 +78,7 @@ export default function ContactPage() {
 
         {/* TikTok */}
         <a
-          href="https://www.tiktok.com"
+          href="https://www.tiktok.com/@kotchomnol?_r=1&_t=ZS-99gzNmNn0Wj"
           target="_blank"
           rel="noopener noreferrer"
           className="contact-card"
@@ -98,7 +98,7 @@ export default function ContactPage() {
 
         {/* Telegram */}
         <a
-          href="https://telegram.org"
+          href="https://t.me/KotChomnol"
           target="_blank"
           rel="noopener noreferrer"
           className="contact-card"
@@ -111,7 +111,7 @@ export default function ContactPage() {
           </div>
           <div className="contact-card-body">
             <h3 className="contact-card-title">Telegram</h3>
-            <p className="contact-card-handle">KotChomnol Support</p>
+            <p className="contact-card-handle">KotChomnol Channel</p>
           </div>
           <span className="contact-action-badge">{visitText} →</span>
         </a>
