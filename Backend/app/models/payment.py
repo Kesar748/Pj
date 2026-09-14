@@ -29,7 +29,7 @@ def gen_uuid() -> str:
 
 
 class PlanType(str, enum.Enum):
-    growth = "growth"
+    starter = "starter"
     business = "business"
 
 

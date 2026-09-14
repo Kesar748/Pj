@@ -6,7 +6,7 @@ from app.models.payment import PlanType, PaymentStatus, SubscriptionStatus  # ad
 
 
 PLAN_PRICES_USD = {
-    PlanType.growth: 0.01,
+    PlanType.starter: 3.99,
     PlanType.business: 24.99,
 }
 
