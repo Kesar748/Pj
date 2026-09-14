@@ -23,8 +23,8 @@ export default function TelegramLoginButton({ onAuth, onError }) {
       window.Telegram.Login.init(
         {
           client_id: clientId,
-          request_access: 'write',
-          lang: 'en'
+          scope: ['profile'],
+          lang: 'en',
         },
         (data) => {
           console.log('Telegram auth response:', data);

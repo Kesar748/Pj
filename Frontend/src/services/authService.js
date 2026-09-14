@@ -1,4 +1,4 @@
-import { nodeApi } from './api';
+import { AUTH_BOOTSTRAP_TIMEOUT_MS, nodeApi } from './api';
 
 export const register = ({ firstName, lastName, phoneNumber, email, password }) =>
   nodeApi.post('/auth/register', {
@@ -14,7 +14,8 @@ export const login = ({ email, password }) =>
 
 export const logout = () => nodeApi.post('/auth/logout');
 
-export const getMe = () => nodeApi.get('/auth/me');
+export const getMe = () =>
+  nodeApi.get('/auth/me', { timeout: AUTH_BOOTSTRAP_TIMEOUT_MS });
 
 export const updateMe = (data) => {
   const firstName = data.firstName ?? data.first_name;

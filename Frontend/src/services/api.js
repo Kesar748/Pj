@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-// Backend — the FastAPI service handling auth, transactions, and voice
+export const AUTH_BOOTSTRAP_TIMEOUT_MS = Number(
+  import.meta.env.VITE_AUTH_BOOTSTRAP_TIMEOUT_MS || 10000
+);
+
+// Backend: the FastAPI service handling auth, transactions, and voice.
 export const nodeApi = axios.create({
   baseURL: import.meta.env.VITE_NODE_API_URL,
   headers: { 'Content-Type': 'application/json' },
@@ -11,7 +15,7 @@ export const aiApi = axios.create({
   baseURL: import.meta.env.VITE_AI_API_URL,
 });
 
-// core/dependencies.py uses HTTPBearer — expects "Authorization: Bearer <token>"
+// core/dependencies.py uses HTTPBearer and expects "Authorization: Bearer <token>".
 nodeApi.interceptors.request.use((config) => {
   const token = localStorage.getItem('kc_token');
   if (token) {
@@ -20,8 +24,8 @@ nodeApi.interceptors.request.use((config) => {
   return config;
 });
 
-// A 401 means decode_access_token failed (expired/invalid/missing) —
-// clear local state so the app falls back to logged-out instead of looping.
+// A 401 means decode_access_token failed (expired/invalid/missing).
+// Clear local state so the app falls back to logged-out instead of looping.
 nodeApi.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -32,3 +36,5 @@ nodeApi.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const isTimeoutError = (error) => error?.code === 'ECONNABORTED';
