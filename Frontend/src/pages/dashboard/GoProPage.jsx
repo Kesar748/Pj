@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Check, Crown, X } from 'lucide-react';
 import MobileAppShell from '../../components/dashboard/MobileAppShell';
 import { useAuth } from '../../context/AuthContext';
@@ -85,6 +85,7 @@ const PLANS = [
 
 export default function GoProPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { language } = useLanguage();
   const isKm = language !== 'en';
@@ -139,6 +140,22 @@ export default function GoProPage() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // If we arrived here from the landing page's "Go Pro" button, skip the
+  // plan-picker screen entirely and jump straight to the Bakong QR — no
+  // need to make the user tap Continue, and no detour through profile
+  // or settings.
+  const autoStartRequested = Boolean(location.state?.autoStart);
+  const autoStartFiredRef = useRef(false);
+
+  useEffect(() => {
+    if (!autoStartRequested || autoStartFiredRef.current) return;
+    autoStartFiredRef.current = true;
+    // Clear the nav state so a refresh/back doesn't retrigger checkout.
+    navigate(location.pathname, { replace: true, state: {} });
+    handleContinue();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStartRequested]);
 
   const handleContinue = async () => {
     if (!selectedPlan.purchasable) return;

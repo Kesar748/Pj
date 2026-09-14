@@ -1,14 +1,86 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Mic, BarChart3, ShieldCheck, Menu, X } from 'lucide-react';
+import { Sun, Moon, Mic, BarChart3, ShieldCheck, Menu, X, Check, Mail } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import {
+  createSubscription,
+  getPaymentStatus,
+  checkPaymentNow,
+  getPaymentQrImageUrl,
+} from '../services/paymentService';
 import './LandingPage.css';
+import './dashboard/GoProPage.css';
+
+const POLL_INTERVAL_MS = 4000;
+
+// FastAPI/Pydantic error `detail` isn't always a string — for 422s it's an
+// array of {type, loc, msg, input, ctx} objects. Never hand that straight to
+// React as a child; always resolve it down to a string first.
+function extractErrorMessage(err, fallback) {
+  const detail = err?.response?.data?.detail;
+  if (!detail) return fallback;
+  if (typeof detail === 'string') return detail;
+  if (Array.isArray(detail)) {
+    const msgs = detail.map((d) => (typeof d === 'string' ? d : d?.msg)).filter(Boolean);
+    return msgs.length ? msgs.join(' ') : fallback;
+  }
+  if (typeof detail === 'object') return detail.msg || fallback;
+  return fallback;
+}
+
+// lucide-react has deprecated (and will eventually remove) brand logos like
+// Facebook/Instagram, and never had Telegram/TikTok at all — so these are
+// small hand-drawn inline SVGs instead, kept consistent and version-proof.
+function FacebookIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M22 12a10 10 0 1 0-11.5 9.87v-6.99H7.9v-2.88h2.6V9.84c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.88h-2.34v6.99A10 10 0 0 0 22 12z" />
+    </svg>
+  );
+}
+
+function InstagramIcon({ size = 18 }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+
+function TelegramIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M21.5 3.5 3.2 10.6c-.8.3-.8 1.4.1 1.7l4.6 1.5 1.8 5.7c.2.7 1.1.9 1.6.4l2.5-2.4 4.7 3.5c.7.5 1.6.1 1.8-.7L23 4.7c.2-.9-.7-1.6-1.5-1.2zM9.4 13.8l7.7-6.6c.3-.3.7.1.4.4l-6.4 7.4-.3 3.1c-.1.3-.5.3-.6 0z" />
+    </svg>
+  );
+}
+
+function TikTokIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M16.5 3c.3 1.9 1.5 3.5 3.2 4.3v3a7.1 7.1 0 0 1-3.2-.9v6.1a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6 0 .9.1v3.1a2.6 2.6 0 1 0 1.8 2.5V3h2.9z" />
+    </svg>
+  );
+}
 
 const content = {
   km: {
     navFeatures: 'មុខងារ',
+    navPricing: 'តម្លៃ',
     navFaq: 'សំណួរ',
     navAbout: 'អំពីយើង',
     navTerms: 'លក្ខខណ្ឌ',
@@ -45,6 +117,19 @@ const content = {
     feat2Desc: 'សង្ខេបចំណូលច្បាស់លាស់ ងាយស្រួលតាមដានរបាយការណ៍ប្រចាំថ្ងៃដោយស្វ័យប្រវត្តិ។',
     feat3Title: 'កន្លែងការងារគណនីមានសុវត្ថិភាព',
     feat3Desc: 'ទិន្នន័យហាងរបស់អ្នកត្រូវបានរក្សាទុកដោយសុវត្ថិភាពខ្ពស់នៅលើប្រព័ន្ធ Cloud ម៉ាស៊ីនមេ។',
+    pricingTitle: 'គម្រោង និងតម្លៃ',
+    pricingSub: 'ចាប់ផ្តើមឥតគិតថ្លៃ ហើយដំឡើងកម្រិតនៅពេលអាជីវកម្មរបស់អ្នករីកចម្រើន',
+    pricingPopular: 'ពេញនិយមបំផុត',
+    pricingFreeLabel: 'គម្រោងឥតគិតថ្លៃ',
+    pricingFreeTagline: 'សម្រាប់ចាប់ផ្តើម',
+    pricingFreePrice: '$0',
+    pricingFreePeriod: 'ជារៀងរហូត',
+    pricingStarterLabel: 'ផែនការចាប់ផ្តើម',
+    pricingStarterTagline: 'សម្រាប់អាជីវកម្មកំពុងរីកចម្រើន',
+    pricingStarterPrice: '$3.99',
+    pricingStarterPeriod: '/ខែ',
+    pricingBtnFree: 'ចាប់ផ្ដើមឥតគិតថ្លៃ',
+    pricingBtnStarter: 'ដំឡើងកម្រិត',
     faqTitle: 'សំណួរដែលសួរញឹកញាប់',
     faq1Q: 'តើខ្ញុំអាចពិនិត្យការលក់មុនរក្សាទុកបានទេ?',
     faq1A: 'បាន។ លទ្ធផលសំឡេងនឹងបើកក្នុងទំព័រពិនិត្យដដែល ដើម្បីឱ្យអ្នកកែទំនិញមុនបញ្ជាក់។',
@@ -65,6 +150,7 @@ const content = {
   },
   en: {
     navFeatures: 'Features',
+    navPricing: 'Pricing',
     navFaq: 'FAQ',
     navAbout: 'About',
     navTerms: 'Terms',
@@ -101,6 +187,19 @@ const content = {
     feat2Desc: 'Clear revenue summaries with automated daily reports that are effortless to track.',
     feat3Title: 'Secure Account Workspace',
     feat3Desc: 'Your shop data is securely saved with cloud infrastructure and access protection.',
+    pricingTitle: 'Plans & Pricing',
+    pricingSub: 'Start free, upgrade as your business grows',
+    pricingPopular: 'Most Popular',
+    pricingFreeLabel: 'Free Tier',
+    pricingFreeTagline: 'For getting started',
+    pricingFreePrice: '$0',
+    pricingFreePeriod: 'forever',
+    pricingStarterLabel: 'Starter Plan',
+    pricingStarterTagline: 'For growing businesses',
+    pricingStarterPrice: '$3.99',
+    pricingStarterPeriod: '/month',
+    pricingBtnFree: 'Start Free',
+    pricingBtnStarter: 'Go Pro',
     faqTitle: 'Frequently Asked Questions',
     faq1Q: 'Can I review sales before saving?',
     faq1A: 'Yes. Voice results open in a review page so you can edit quantities and prices before confirming.',
@@ -163,6 +262,101 @@ export default function LandingPage() {
     }
   };
 
+  // Go Pro should never route through the plan-picker / profile page —
+  // clicking it starts the Bakong checkout immediately and shows the QR
+  // right here on the landing page.
+  const [payment, setPayment] = useState(null); // { id, amount, deeplink, status }
+  const [qrImageUrl, setQrImageUrl] = useState(null);
+  const [isStartingCheckout, setIsStartingCheckout] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [checkoutError, setCheckoutError] = useState(null);
+  const pollRef = useRef(null);
+
+  const stopPolling = () => {
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  };
+
+  const startPolling = (paymentId) => {
+    stopPolling();
+    pollRef.current = setInterval(async () => {
+      try {
+        const { data } = await getPaymentStatus(paymentId);
+        if (data.status === 'paid') {
+          stopPolling();
+          setPayment((prev) => (prev ? { ...prev, status: 'paid' } : prev));
+        } else if (data.status === 'expired' || data.status === 'failed') {
+          stopPolling();
+          setPayment((prev) => (prev ? { ...prev, status: data.status } : prev));
+        }
+      } catch {
+        // transient network error — keep polling, next tick will retry
+      }
+    }, POLL_INTERVAL_MS);
+  };
+
+  useEffect(() => {
+    return () => {
+      stopPolling();
+      if (qrImageUrl) URL.revokeObjectURL(qrImageUrl);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const closeCheckoutModal = () => {
+    stopPolling();
+    if (qrImageUrl) URL.revokeObjectURL(qrImageUrl);
+    setQrImageUrl(null);
+    setPayment(null);
+    setCheckoutError(null);
+  };
+
+  const handleGoPro = async () => {
+    closeMenu();
+    if (!isLoggedIn) {
+      // Payment needs an account to attach to — guests have to sign up first.
+      navigate('/register');
+      return;
+    }
+    setCheckoutError(null);
+    setIsStartingCheckout(true);
+    try {
+      const { data } = await createSubscription('starter');
+      setPayment(data);
+      const url = await getPaymentQrImageUrl(data.id);
+      setQrImageUrl(url);
+      startPolling(data.id);
+    } catch (err) {
+      console.error('Failed to start Pro checkout:', err);
+      setCheckoutError(
+        extractErrorMessage(
+          err,
+          activeLang === 'km'
+            ? 'មិនអាចបង្កើតការទូទាត់បានទេ។ សូមព្យាយាមម្តងទៀត។'
+            : 'Could not start checkout. Please try again.'
+        )
+      );
+    } finally {
+      setIsStartingCheckout(false);
+    }
+  };
+
+  const handleCheckNow = async () => {
+    if (!payment) return;
+    setIsChecking(true);
+    try {
+      const { data } = await checkPaymentNow(payment.id);
+      setPayment((prev) => (prev ? { ...prev, status: data.status } : prev));
+      if (data.status !== 'pending') stopPolling();
+    } catch {
+      // ignore — background polling will keep trying
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
   return (
     <div className="landing-page font-kantomruy">
       {/* Floating Header */}
@@ -181,11 +375,9 @@ export default function LandingPage() {
           {/* Desktop Nav Links */}
           <nav className="landing-nav-links" aria-label="Primary Navigation">
             <a href="#features" onClick={(e) => handleNavClick(e, 'features')}>{txt.navFeatures}</a>
+            <a href="#pricing" onClick={(e) => handleNavClick(e, 'pricing')}>{txt.navPricing}</a>
             <a href="#faq" onClick={(e) => handleNavClick(e, 'faq')}>{txt.navFaq}</a>
             <Link to="/about">{txt.navAbout}</Link>
-            <Link to="/terms">{txt.navTerms}</Link>
-            <Link to="/privacy">{txt.navPrivacy}</Link>
-            <Link to="/contact">{txt.navContact}</Link>
           </nav>
 
           {/* Nav Right Controls */}
@@ -214,22 +406,13 @@ export default function LandingPage() {
             {/* Auth Buttons */}
             <div className="landing-auth-buttons">
               {isLoggedIn ? (
-                <>
-                  <button 
-                    type="button" 
-                    className="landing-text-btn desktop-only" 
-                    onClick={handleLogout}
-                  >
-                    {txt.navLogout}
-                  </button>
-                  <button 
-                    type="button" 
-                    className="landing-primary-btn compact" 
-                    onClick={() => navigate('/dashboard')}
-                  >
-                    {txt.navDashboard}
-                  </button>
-                </>
+                <button 
+                  type="button" 
+                  className="landing-primary-btn compact" 
+                  onClick={() => navigate('/dashboard')}
+                >
+                  {txt.navDashboard}
+                </button>
               ) : (
                 <>
                   <button 
@@ -284,11 +467,9 @@ export default function LandingPage() {
 
         <nav className="drawer-nav-links">
           <a href="#features" onClick={(e) => handleNavClick(e, 'features')}>{txt.navFeatures}</a>
+          <a href="#pricing" onClick={(e) => handleNavClick(e, 'pricing')}>{txt.navPricing}</a>
           <a href="#faq" onClick={(e) => handleNavClick(e, 'faq')}>{txt.navFaq}</a>
           <Link to="/about" onClick={closeMenu}>{txt.navAbout}</Link>
-          <Link to="/terms" onClick={closeMenu}>{txt.navTerms}</Link>
-          <Link to="/privacy" onClick={closeMenu}>{txt.navPrivacy}</Link>
-          <Link to="/contact" onClick={closeMenu}>{txt.navContact}</Link>
 
           {/* Theme Mode Toggle */}
           <button 
@@ -433,6 +614,75 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section id="pricing" className="landing-pricing-section">
+        <div className="landing-container">
+          <div className="section-title-wrap">
+            <h2>{txt.pricingTitle}</h2>
+            <p>{txt.pricingSub}</p>
+          </div>
+
+          <div className="pricing-grid">
+            {/* Free Tier */}
+            <div className="pricing-card">
+              <div className="pricing-card-head">
+                <h3>{txt.pricingFreeLabel}</h3>
+                <p className="pricing-tagline">{txt.pricingFreeTagline}</p>
+              </div>
+              <div className="pricing-price">
+                <span className="pricing-amount">{txt.pricingFreePrice}</span>
+                <span className="pricing-period">{txt.pricingFreePeriod}</span>
+              </div>
+              <ul className="pricing-features">
+                <li>{activeLang === 'en' ? 'Basic sales recording' : 'ការកត់ត្រាការលក់មូលដ្ឋាន'}</li>
+                <li>{activeLang === 'en' ? 'Manual entry' : 'ការបញ្ចូលដោយដៃ'}</li>
+                <li>{activeLang === 'en' ? 'Limited voice transactions' : 'ប្រតិបត្តិការសំឡេងមានកំណត់'}</li>
+                <li>{activeLang === 'en' ? 'Daily transaction history' : 'ប្រវត្តិប្រតិបត្តិការ (ប្រចាំថ្ងៃ)'}</li>
+                <li>{activeLang === 'en' ? '1 business · 1 user' : 'អាជីវកម្ម 1 · អ្នកប្រើប្រាស់ 1'}</li>
+              </ul>
+              <button
+                type="button"
+                className="pricing-btn pricing-btn-outline"
+                onClick={() => navigate(isLoggedIn ? '/dashboard/voice' : '/register')}
+              >
+                {txt.pricingBtnFree}
+              </button>
+            </div>
+
+            {/* Starter Plan (Popular) */}
+            <div className="pricing-card pricing-card-popular">
+              <span className="pricing-popular-badge">{txt.pricingPopular}</span>
+              <div className="pricing-card-head">
+                <h3>{txt.pricingStarterLabel}</h3>
+                <p className="pricing-tagline">{txt.pricingStarterTagline}</p>
+              </div>
+              <div className="pricing-price">
+                <span className="pricing-amount">{txt.pricingStarterPrice}</span>
+                <span className="pricing-period">{txt.pricingStarterPeriod}</span>
+              </div>
+              <ul className="pricing-features">
+                <li>{activeLang === 'en' ? 'Everything in Free' : 'អ្វីៗគ្រប់យ៉ាងនៅក្នុងគម្រោងឥតគិតថ្លៃ'}</li>
+                <li>{activeLang === 'en' ? 'Unlimited transactions & history' : 'ប្រតិបត្តិការ និងប្រវត្តិគ្មានដែនកំណត់'}</li>
+                <li>{activeLang === 'en' ? 'Voice-to-transaction' : 'ការបញ្ចូលដោយសំឡេង'}</li>
+                <li>{activeLang === 'en' ? 'Revenue & expense tracking' : 'តាមដានចំណូល និងចំណាយ'}</li>
+                <li>{activeLang === 'en' ? 'Product management' : 'ការគ្រប់គ្រងផលិតផល'}</li>
+                <li>{activeLang === 'en' ? 'Up to 2 users · 1 business' : 'អ្នកប្រើប្រាស់ 2 នាក់ · អាជីវកម្ម 1'}</li>
+              </ul>
+              <button
+                type="button"
+                className="pricing-btn pricing-btn-filled"
+                onClick={handleGoPro}
+                disabled={isStartingCheckout}
+              >
+                {isStartingCheckout
+                  ? (activeLang === 'km' ? 'កំពុងដំណើរការ...' : 'Processing...')
+                  : txt.pricingBtnStarter}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section id="faq" className="landing-faq-section">
         <div className="faq-container">
@@ -484,6 +734,48 @@ export default function LandingPage() {
               <p className="footer-brand-desc">
                 {txt.footerDesc}
               </p>
+              {/* Update these hrefs to your real contact/social URLs */}
+              <div className="footer-social-row">
+                <Link to="/contact" className="footer-contact-icon-btn" aria-label={txt.navContact}>
+                  <Mail size={18} />
+                </Link>
+                <a
+                  href="https://facebook.com/kotchomnol"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-contact-icon-btn"
+                  aria-label="Facebook"
+                >
+                  <FacebookIcon size={18} />
+                </a>
+                <a
+                  href="https://instagram.com/kotchomnol"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-contact-icon-btn"
+                  aria-label="Instagram"
+                >
+                  <InstagramIcon size={18} />
+                </a>
+                <a
+                  href="https://t.me/kotchomnol"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-contact-icon-btn"
+                  aria-label="Telegram"
+                >
+                  <TelegramIcon size={18} />
+                </a>
+                <a
+                  href="https://tiktok.com/@kotchomnol"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-contact-icon-btn"
+                  aria-label="TikTok"
+                >
+                  <TikTokIcon size={18} />
+                </a>
+              </div>
             </div>
 
             <div className="footer-links-col">
@@ -492,7 +784,6 @@ export default function LandingPage() {
               <Link to="/about">{txt.footerAbout}</Link>
               <Link to="/terms">{txt.footerTerms}</Link>
               <Link to="/privacy">{txt.footerPrivacy}</Link>
-              <Link to="/contact">{txt.footerContact}</Link>
             </div>
           </div>
 
@@ -502,6 +793,117 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      {/* Bakong Checkout Modal — opens straight over the landing page,
+          no navigation to any plan-picker/profile screen */}
+      {payment && (
+        <div className="gopro-modal-overlay" onClick={closeCheckoutModal}>
+          <div className="gopro-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="gopro-modal-close"
+              onClick={closeCheckoutModal}
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
+
+            {payment.status === 'paid' ? (
+              <div className="gopro-modal-state">
+                <Check size={36} className="gopro-feature-check" />
+                <h3>{activeLang === 'km' ? 'ការទូទាត់ជោគជ័យ!' : 'Payment successful!'}</h3>
+                <p>
+                  {activeLang === 'km'
+                    ? 'គណនីរបស់អ្នកឥឡូវនេះគឺជា Pro រួចហើយ។'
+                    : 'Your account is now Pro.'}
+                </p>
+                <button
+                  type="button"
+                  className="gopro-continue-btn"
+                  onClick={() => {
+                    closeCheckoutModal();
+                    navigate('/dashboard');
+                  }}
+                >
+                  {activeLang === 'km' ? 'ទៅកាន់ទំព័រដើម' : 'Go to dashboard'}
+                </button>
+              </div>
+            ) : payment.status === 'expired' || payment.status === 'failed' ? (
+              <div className="gopro-modal-state">
+                <h3>{activeLang === 'km' ? 'ការទូទាត់មិនបានសម្រេច' : 'Payment not completed'}</h3>
+                <p>
+                  {activeLang === 'km'
+                    ? 'QR ផុតកំណត់ ឬការទូទាត់បរាជ័យ។ សូមព្យាយាមម្តងទៀត។'
+                    : 'The QR expired or the payment failed. Please try again.'}
+                </p>
+                <button type="button" className="gopro-continue-btn" onClick={closeCheckoutModal}>
+                  {activeLang === 'km' ? 'បិទ' : 'Close'}
+                </button>
+              </div>
+            ) : (
+              <div className="gopro-modal-state">
+                <h3>{activeLang === 'km' ? 'ស្កេន QR ដើម្បីទូទាត់' : 'Scan to pay'}</h3>
+                <p className="gopro-modal-amount">${Number(payment.amount).toFixed(2)}</p>
+                {qrImageUrl ? (
+                  <img src={qrImageUrl} alt="Bakong KHQR" className="gopro-qr-image" />
+                ) : (
+                  <div className="gopro-qr-loading" />
+                )}
+                {payment.deeplink && (
+                  <a
+                    className="gopro-deeplink-btn"
+                    href={payment.deeplink}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {activeLang === 'km' ? 'បើកកម្មវិធី Bakong' : 'Open in Bakong app'}
+                  </a>
+                )}
+                <button
+                  type="button"
+                  className="gopro-continue-btn"
+                  onClick={handleCheckNow}
+                  disabled={isChecking}
+                >
+                  {isChecking
+                    ? activeLang === 'km'
+                      ? 'កំពុងពិនិត្យ...'
+                      : 'Checking...'
+                    : activeLang === 'km'
+                    ? 'ខ្ញុំបានទូទាត់រួច'
+                    : "I've paid"}
+                </button>
+                <p className="gopro-cta-note">
+                  {activeLang === 'km'
+                    ? 'កំពុងរង់ចាំការទូទាត់ដោយស្វ័យប្រវត្តិ...'
+                    : 'Waiting for payment automatically...'}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {checkoutError && !payment && (
+        <div className="gopro-modal-overlay" onClick={() => setCheckoutError(null)}>
+          <div className="gopro-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="gopro-modal-close"
+              onClick={() => setCheckoutError(null)}
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
+            <div className="gopro-modal-state">
+              <h3>{activeLang === 'km' ? 'មានបញ្ហា' : 'Something went wrong'}</h3>
+              <p>{checkoutError}</p>
+              <button type="button" className="gopro-continue-btn" onClick={handleGoPro}>
+                {activeLang === 'km' ? 'ព្យាយាមម្តងទៀត' : 'Try again'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

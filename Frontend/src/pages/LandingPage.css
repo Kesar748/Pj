@@ -770,6 +770,167 @@ html {
 }
 
 /* ==========================================================================
+   Pricing Section
+   ========================================================================== */
+.landing-pricing-section {
+  padding: 60px 0;
+  background-color: transparent;
+}
+
+@media (min-width: 768px) {
+  .landing-pricing-section {
+    padding: 80px 0;
+  }
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.pricing-card {
+  position: relative;
+  background-color: #ffffff;
+  padding: 32px 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(126, 34, 206, 0.12);
+  box-shadow: 0 10px 25px -4px rgba(126, 34, 206, 0.08), 0 3px 10px rgba(126, 34, 206, 0.03);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-3px);
+}
+
+.pricing-card-popular {
+  border: 2px solid #7e22ce;
+  box-shadow: 0 14px 30px -4px rgba(126, 34, 206, 0.22);
+}
+
+.pricing-popular-badge {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #4c1d95, #2e1065);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.pricing-card-head h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0 0 4px;
+}
+
+.pricing-tagline {
+  color: #4b5563;
+  font-size: 13px;
+  margin: 0;
+}
+
+.pricing-price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 20px 0;
+}
+
+.pricing-amount {
+  font-size: 34px;
+  font-weight: 800;
+  color: #1e1b4b;
+  letter-spacing: -0.02em;
+}
+
+.pricing-period {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.pricing-features {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.pricing-features li {
+  font-size: 14px;
+  color: #374151;
+  padding-left: 22px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.pricing-features li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: rgba(126, 34, 206, 0.12);
+  border: 1px solid rgba(126, 34, 206, 0.3);
+}
+
+.pricing-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.pricing-btn:hover {
+  transform: translateY(-1px);
+}
+
+.pricing-btn-outline {
+  background-color: #ffffff;
+  color: #7e22ce;
+  border: 1.5px solid rgba(126, 34, 206, 0.4);
+}
+
+.pricing-btn-outline:hover {
+  background-color: rgba(126, 34, 206, 0.06);
+}
+
+.pricing-btn-filled {
+  background: linear-gradient(135deg, #4c1d95, #2e1065);
+  color: #ffffff;
+  box-shadow: 0 10px 20px -6px rgba(76, 29, 149, 0.5);
+}
+
+.pricing-btn-filled:hover {
+  box-shadow: 0 14px 26px -6px rgba(76, 29, 149, 0.6);
+}
+
+/* ==========================================================================
    FAQ Section
    ========================================================================== */
 .landing-faq-section {
@@ -924,6 +1085,33 @@ html {
   max-width: 448px;
   line-height: 1.625;
   margin: 0;
+}
+
+.footer-social-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.footer-contact-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: rgba(126, 34, 206, 0.08);
+  border: 1px solid rgba(126, 34, 206, 0.18);
+  color: #7e22ce;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.footer-contact-icon-btn:hover {
+  background-color: rgba(126, 34, 206, 0.14);
+  border-color: #7e22ce;
+  color: #581c87;
 }
 
 .footer-links-col {
@@ -1152,6 +1340,47 @@ html[data-theme='dark'] .feature-card p {
   color: #94a3b8 !important;
 }
 
+/* Dark Pricing */
+html[data-theme='dark'] .pricing-card {
+  background-color: #0f0a1f !important;
+  border: 1px solid rgba(168, 85, 247, 0.18) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+}
+
+html[data-theme='dark'] .pricing-card-popular {
+  border: 2px solid #a855f7 !important;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.55), 0 0 20px rgba(168, 85, 247, 0.18) !important;
+}
+
+html[data-theme='dark'] .pricing-card-head h3,
+html[data-theme='dark'] .pricing-amount {
+  color: #ffffff !important;
+}
+
+html[data-theme='dark'] .pricing-tagline,
+html[data-theme='dark'] .pricing-period {
+  color: #94a3b8 !important;
+}
+
+html[data-theme='dark'] .pricing-features li {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme='dark'] .pricing-features li::before {
+  background-color: rgba(168, 85, 247, 0.18) !important;
+  border: 1px solid rgba(168, 85, 247, 0.35) !important;
+}
+
+html[data-theme='dark'] .pricing-btn-outline {
+  background-color: transparent !important;
+  color: #c084fc !important;
+  border: 1.5px solid rgba(168, 85, 247, 0.4) !important;
+}
+
+html[data-theme='dark'] .pricing-btn-outline:hover {
+  background-color: rgba(168, 85, 247, 0.1) !important;
+}
+
 /* Dark FAQ */
 html[data-theme='dark'] .faq-title {
   color: #ffffff !important;
@@ -1200,6 +1429,17 @@ html[data-theme='dark'] .footer-brand-title {
 
 html[data-theme='dark'] .footer-brand-desc {
   color: #64748b !important;
+}
+
+html[data-theme='dark'] .footer-contact-icon-btn {
+  background-color: rgba(168, 85, 247, 0.12) !important;
+  border-color: rgba(168, 85, 247, 0.3) !important;
+  color: #d8b4fe !important;
+}
+
+html[data-theme='dark'] .footer-contact-icon-btn:hover {
+  background-color: rgba(168, 85, 247, 0.22) !important;
+  color: #ffffff !important;
 }
 
 html[data-theme='dark'] .footer-links-col a {
