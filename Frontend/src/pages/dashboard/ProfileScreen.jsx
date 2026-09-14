@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { 
+import {
   ArrowLeft,
   Check,
   ChevronRight,
-  Globe2, 
-  Languages, 
-  Lock, 
-  LogOut, 
+  Crown,
+  Globe2,
+  Languages,
+  Lock,
+  LogOut,
   Mail,
-  Moon, 
-  Pencil, 
-  Phone, 
-  Shield, 
+  Moon,
+  Pencil,
+  Phone,
+  Shield,
   Smile,
-  Sun, 
+  Sun,
   User,
   X
 } from 'lucide-react';
@@ -53,7 +54,7 @@ export default function ProfileScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [savingAvatar, setSavingAvatar] = useState(false);
-  
+    
   const [mobileView, setMobileView] = useState('menu');
 
   // Instant local avatar state so UI updates immediately without waiting for edge cache
@@ -113,7 +114,7 @@ export default function ProfileScreen() {
       }
       setStatus({ 
         type: 'success', 
-        message: t('profileUpdated') || (isKm ? 'បានធ្វើបច្ចុប្បន្នភាពគណនីដោយជោគជ័យ' : 'Profile updated successfully.') 
+        message: t('profileUpdated') || (isKm ? 'បានធ្វើបច្ចុប្បន្នភាពគណនីដោយជោគជ័យ' : 'Profile updated successfully.')
       });
       setIsEditing(false);
     } catch (err) {
@@ -218,6 +219,18 @@ export default function ProfileScreen() {
             </div>
 
             <nav className="settings-nav-menu" aria-label="Settings navigation">
+              <button 
+                type="button" 
+                className="settings-nav-item"
+                onClick={() => navigate('/dashboard/go-pro')}
+              >
+                <Crown size={18} />
+                <div className="nav-item-dual">
+                  <span>{t('goPro') || (isKm ? 'ក្លាយជា Pro' : 'Go Pro')}</span>
+                  <ChevronRight size={16} className="mobile-chevron" />
+                </div>
+              </button>
+
               <button 
                 type="button" 
                 className="settings-nav-item"

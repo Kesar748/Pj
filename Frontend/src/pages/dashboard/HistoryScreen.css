@@ -1,7 +1,7 @@
 .analytics-page-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 32px;
   font-family: 'Kantumruy Pro', sans-serif;
   color: var(--color-text-dark);
 }
@@ -64,7 +64,7 @@ html[data-theme='dark'] .analytics-title {
 .analytics-four-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 16px;
+  gap: 24px;
 }
 
 @media (min-width: 640px) {
@@ -82,12 +82,12 @@ html[data-theme='dark'] .analytics-title {
 .stat-tile-card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 20px;
-  padding: 18px 20px;
+  border-radius: 24px;
+  padding: 24px;
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 10px 24px -4px rgba(126, 34, 206, 0.08), 0 3px 10px rgba(126, 34, 206, 0.04);
+  box-shadow: 0 12px 30px -4px rgba(126, 34, 206, 0.08), 0 4px 12px rgba(126, 34, 206, 0.04);
   transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
@@ -103,9 +103,9 @@ html[data-theme='dark'] .stat-tile-card {
 }
 
 .stat-icon-wrap {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,7 +145,7 @@ html[data-theme='dark'] .stat-tile-card {
 }
 
 .stat-tile-val {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--color-text-dark);
   margin: 2px 0 0;
@@ -175,7 +175,7 @@ html[data-theme='dark'] .text-emerald {
 .analytics-sections-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 24px;
 }
 
 @media (min-width: 1024px) {

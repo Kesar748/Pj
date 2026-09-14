@@ -1,4 +1,4 @@
-import { ChevronRight, Globe2, Languages, Lock, LogOut, Moon, Sun, User } from 'lucide-react';
+import { ChevronRight, Crown, Globe2, Languages, Lock, LogOut, Moon, Sun, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -17,6 +17,11 @@ export default function SettingsList() {
 
   return (
     <section className="settings-list">
+      <button type="button" onClick={() => navigate('/dashboard/go-pro')}>
+        <SettingIcon><Crown size={21} /></SettingIcon>
+        <span><strong>{t('goPro')}</strong><small>{t('goProHint')}</small></span>
+        <ChevronRight size={21} />
+      </button>
       <button type="button" onClick={() => navigate('/dashboard/profile/edit')}>
         <SettingIcon><User size={21} /></SettingIcon>
         <span><strong>{t('myAccount')}</strong><small>{t('makeChanges')}</small></span>
