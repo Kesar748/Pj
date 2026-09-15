@@ -63,13 +63,23 @@ html[data-theme='dark'] .analytics-title {
 /* 4-Column Stat Tiles */
 .analytics-four-grid {
   display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
-
+.analytics-four-grid .stat-tile-card:nth-child(3),
+.analytics-four-grid .stat-tile-card:nth-child(4) {
+  grid-column: 1 / -1;
+}
 @media (min-width: 640px) {
   .analytics-four-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  /* From tablet width up, go back to an even 2x2 grid. */
+  .analytics-four-grid .stat-tile-card:nth-child(3),
+  .analytics-four-grid .stat-tile-card:nth-child(4) {
+    grid-column: auto;
   }
 }
 
@@ -78,7 +88,6 @@ html[data-theme='dark'] .analytics-title {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
-
 .stat-tile-card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);

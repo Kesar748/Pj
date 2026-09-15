@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, MailCheck, ShieldCheck } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { getErrorMessage, verifyEmail } from '../../services/authService';
 import '../dashboard/ChangePasswordScreen.css';
@@ -8,8 +9,10 @@ import '../dashboard/ChangePasswordScreen.css';
 export default function VerifyEmailPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const { t } = useLanguage();
   const [email, setEmail] = useState(location.state?.email || '');
+  const password = location.state?.password || '';
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
@@ -31,6 +34,20 @@ export default function VerifyEmailPage() {
 
     try {
       await verifyEmail({ email, code: code.trim() });
+
+      // Skip the separate login step: if we still have the password from
+      // registration, sign the user in right away and drop them into the
+      // app. Otherwise (e.g. page was opened directly), fall back to login.
+      if (password) {
+        try {
+          await login({ email, password });
+          navigate('/dashboard');
+          return;
+        } catch {
+          // Auto-login failed — the account is verified, just send them to
+          // the login page instead of leaving them stuck here.
+        }
+      }
       navigate('/login');
     } catch (err) {
       const message = getErrorMessage(err);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Mic, BarChart3, ShieldCheck, Menu, X, Check, Mail } from 'lucide-react';
+import { Sun, Moon, Mic, BarChart3, ShieldCheck, Menu, X, Check, Mail, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -88,7 +88,7 @@ const content = {
     navContact: 'ទំនាក់ទំនង',
     navSignIn: 'ចូលគណនី',
     navStartFree: 'ចាប់ផ្ដើម',
-    navDashboard: 'ទំព័រដើម',
+    navDashboard: 'កម្មវិធី',
     navLogout: 'ចាកចេញ',
     heroBadge: 'បង្កើតសម្រាប់ម្ចាស់ហាងខ្មែរ',
     heroTitle1: 'និយាយការលក់របស់អ្នក ',
@@ -158,7 +158,7 @@ const content = {
     navContact: 'Contact',
     navSignIn: 'Sign In',
     navStartFree: 'Start Free',
-    navDashboard: 'Home',
+    navDashboard: 'App',
     navLogout: 'Logout',
     heroBadge: 'Built for Cambodian Shop Owners',
     heroTitle1: 'Speak your sales. ',
@@ -250,6 +250,13 @@ export default function LandingPage() {
     setMobileMenuOpen(false);
     navigate('/');
   };
+
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
+  const faqItems = [
+    { q: txt.faq1Q, a: txt.faq1A },
+    { q: txt.faq2Q, a: txt.faq2A },
+    { q: txt.faq3Q, a: txt.faq3A },
+  ];
 
   const closeMenu = () => setMobileMenuOpen(false);
 
@@ -368,7 +375,7 @@ export default function LandingPage() {
             type="button" 
             onClick={() => { closeMenu(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           >
-            <div className="landing-brand-icon">K</div>
+            <img src="/logo-mascot.png" alt="KOTCHOMNOL" className="landing-brand-icon" />
             <span className="landing-brand-title">KOTCHOMNOL</span>
           </button>
 
@@ -580,7 +587,9 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section id="features" className="landing-features-section">
-        <div className="landing-container">
+        <div className="landing-features-bg" aria-hidden="true" />
+        <div className="landing-features-overlay" aria-hidden="true" />
+        <div className="landing-container landing-features-content">
           <div className="section-title-wrap">
             <h2>{txt.featuresTitle}</h2>
             <p>{txt.featuresSub}</p>
@@ -688,21 +697,26 @@ export default function LandingPage() {
         <div className="faq-container">
           <h2 className="faq-title">{txt.faqTitle}</h2>
 
-          <div className="faq-list">
-            <div className="faq-card">
-              <h3>{txt.faq1Q}</h3>
-              <p>{txt.faq1A}</p>
-            </div>
-
-            <div className="faq-card">
-              <h3>{txt.faq2Q}</h3>
-              <p>{txt.faq2A}</p>
-            </div>
-
-            <div className="faq-card">
-              <h3>{txt.faq3Q}</h3>
-              <p>{txt.faq3A}</p>
-            </div>
+          <div className="faq-accordion">
+            {faqItems.map((item, index) => {
+              const isOpen = openFaqIndex === index;
+              return (
+                <div key={index} className={`faq-accordion-item ${isOpen ? 'open' : ''}`}>
+                  <button
+                    type="button"
+                    className="faq-accordion-trigger"
+                    onClick={() => setOpenFaqIndex(isOpen ? -1 : index)}
+                    aria-expanded={isOpen}
+                  >
+                    <span>{item.q}</span>
+                    <ChevronDown size={18} className="faq-accordion-chevron" />
+                  </button>
+                  <div className="faq-accordion-panel">
+                    <p>{item.a}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -728,7 +742,7 @@ export default function LandingPage() {
           <div className="footer-top-row">
             <div className="footer-brand-col">
               <div className="footer-brand-logo">
-                <div className="footer-brand-icon">K</div>
+                <img src="/logo-mascot.png" alt="KOTCHOMNOL" className="footer-brand-icon" />
                 <span className="footer-brand-title">KOTCHOMNOL</span>
               </div>
               <p className="footer-brand-desc">

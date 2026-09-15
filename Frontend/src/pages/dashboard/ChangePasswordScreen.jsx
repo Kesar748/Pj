@@ -132,7 +132,7 @@ export default function ChangePasswordScreen() {
   };
 
   return (
-    <MobileAppShell activeTab="profile" showBottomNav={false}>
+    <MobileAppShell activeTab="profile">
       <div className="pwd-split-wrapper font-kantumruy">
         {/* Navigation Bar */}
         <div className="pwd-top-nav">

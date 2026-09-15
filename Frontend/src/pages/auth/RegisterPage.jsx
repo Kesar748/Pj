@@ -18,7 +18,7 @@ const emptyForm = {
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { loginWithTelegram } = useAuth();
+  const { login, loginWithTelegram } = useAuth();
   const { language, t } = useLanguage();
   const isKm = language !== 'en';
 
@@ -83,8 +83,23 @@ export default function RegisterPage() {
       const response = await register(formData);
       const requiresEmailVerification = response.data?.data?.requires_email_verification !== false;
       if (requiresEmailVerification) {
-        navigate('/verify-email', { state: { email: formData.email } });
-      } else {
+        // Carry the password forward so VerifyEmailPage can log the user in
+        // automatically right after the code is confirmed — no separate
+        // login step needed.
+        navigate('/verify-email', {
+          state: { email: formData.email, password: formData.password },
+        });
+        return;
+      }
+
+      // No email verification required — sign the user in immediately and
+      // drop them straight into the app instead of the login screen.
+      try {
+        await login({ email: formData.email, password: formData.password });
+        navigate('/dashboard');
+      } catch {
+        // If auto-login fails for any reason, fall back to the login page
+        // with the account already created.
         navigate('/login', { state: { registered: true, email: formData.email } });
       }
     } catch (err) {

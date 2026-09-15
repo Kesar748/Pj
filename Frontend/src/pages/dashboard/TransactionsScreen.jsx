@@ -368,7 +368,7 @@ export default function TransactionsScreen() {
             />
           </div>
 
-          <section className="records-list">
+          <section className="records-table-section">
             {loadingSales && (
               <div className="records-loading">
                 {isKm ? 'កំពុងផ្ទុកទិន្នន័យ...' : 'Loading sales records...'}
@@ -384,39 +384,64 @@ export default function TransactionsScreen() {
                 </p>
               </div>
             )}
-            {filteredSales.map((sale) => {
-              const rowTotals = calculateEquivalentTotals({
-                usd: sale.totalUSD,
-                khr: sale.totalKHR,
-                exchangeRate,
-              });
-              const formattedDate = formatDisplayDate(sale.date, language);
+            {!loadingSales && filteredSales.length > 0 && (
+              <div className="records-table-wrapper">
+                <table className="records-table">
+                  <thead>
+                    <tr>
+                      <th>{isKm ? 'កាលបរិច្ឆេទ' : 'Date'}</th>
+                      <th>{isKm ? 'កំណត់ត្រា' : 'Record'}</th>
+                      <th className="text-center">{isKm ? 'ទំនិញ' : 'Items'}</th>
+                      <th className="text-right">USD</th>
+                      <th className="text-right">KHR</th>
+                      <th className="text-center">{isKm ? 'សកម្មភាព' : 'Action'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredSales.map((sale) => {
+                      const rowTotals = calculateEquivalentTotals({
+                        usd: sale.totalUSD,
+                        khr: sale.totalKHR,
+                        exchangeRate,
+                      });
+                      const formattedDate = formatDisplayDate(sale.date, language);
 
-              return (
-                <article
-                  key={sale.saleId}
-                  className="record-item-card"
-                  onClick={() => handleSelectSale(sale.saleId)}
-                >
-                  <div className="record-card-left">
-                    <span className="record-date-chip">{formattedDate}</span>
-                    <h4 className="record-item-title">{summarizeSaleTitle(sale)}</h4>
-                    <span className="record-item-count">
-                      {sale.items.length} {isKm ? 'ទំនិញ' : 'items'}
-                    </span>
-                  </div>
-                  <div className="record-card-right">
-                    <div className="record-usd-price">${rowTotals.totalUSD.toFixed(2)}</div>
-                    <div className="record-khr-price">
-                      {Math.round(rowTotals.totalKHR).toLocaleString()} KHR
-                    </div>
-                    <button className="view-detail-link" type="button">
-                      <Eye size={14} /> {isKm ? 'មើល' : 'View'}
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
+                      return (
+                        <tr
+                          key={sale.saleId}
+                          className="records-table-row"
+                          onClick={() => handleSelectSale(sale.saleId)}
+                        >
+                          <td className="records-table-date">{formattedDate}</td>
+                          <td className="records-table-title">{summarizeSaleTitle(sale)}</td>
+                          <td className="text-center">
+                            {sale.items.length} {isKm ? 'ទំនិញ' : 'items'}
+                          </td>
+                          <td className="text-right records-table-usd">
+                            ${rowTotals.totalUSD.toFixed(2)}
+                          </td>
+                          <td className="text-right records-table-khr">
+                            {Math.round(rowTotals.totalKHR).toLocaleString()} KHR
+                          </td>
+                          <td className="text-center">
+                            <button
+                              className="view-detail-link"
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelectSale(sale.saleId);
+                              }}
+                            >
+                              <Eye size={14} /> {isKm ? 'មើល' : 'View'}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </section>
         </div>
       )}
