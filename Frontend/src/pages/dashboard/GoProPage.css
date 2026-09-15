@@ -117,18 +117,13 @@ html[data-theme='dark'] .gopro-hero {
   line-height: 1.6;
 }
 
-/* Plans + side grid */
+/* Plans + side grid — Free Tier and Starter Plan stack as two full-width
+   rows, with the features/CTA column stacked full-width underneath them
+   (no side-by-side desktop split). */
 .gopro-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-}
-
-@media (min-width: 1024px) {
-  .gopro-grid {
-    grid-template-columns: 2fr 1fr;
-    align-items: start;
-  }
 }
 
 .gopro-plans {

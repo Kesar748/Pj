@@ -94,7 +94,7 @@ html {
   padding: 0;
   flex-shrink: 0;
 }
-
+html[data-theme='dark'] .landing-brand-icon,
 .landing-brand-icon {
   width: 38px;
   height: 38px;
@@ -1136,6 +1136,9 @@ html {
   border-radius: 0;
   box-shadow: none;
 }
+html[data-theme='dark'] .footer-brand-icon {
+  filter: brightness(0) invert(1);
+}
 
 .footer-brand-title {
   font-weight: 700;
@@ -1524,4 +1527,274 @@ html[data-theme='dark'] .footer-links-col a:hover {
 html[data-theme='dark'] .footer-bottom-row {
   border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: #64748b !important;
+}
+
+
+/* ==========================================================================
+   ADDED — section bands, FAQ split layout, Start Free button (no gradients)
+   (everything above is the original style, untouched)
+   ========================================================================== */
+
+/* ---------- Section bands (light) ----------
+   hero: lavender → features: white → pricing: purple → faq: white → cta: dark purple */
+.landing-hero-section {
+  background-color: #f5f2fb;
+}
+
+.landing-features-overlay {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.landing-features-section .feature-card {
+  background-color: #faf7ff;
+}
+
+.landing-pricing-section {
+  background-color: #ede9fe;
+}
+
+.landing-faq-section {
+  background-color: #ffffff;
+}
+
+.landing-features-section,
+.landing-pricing-section,
+.landing-faq-section {
+  border-top: 1px solid rgba(126, 34, 206, 0.1);
+}
+
+/* flatten old gradients to solid colors */
+.landing-cta-banner {
+  background: #4c1d95;
+}
+
+.landing-primary-btn,
+.hero-btn-primary {
+  background: #7c3aed;
+}
+
+.pricing-btn-filled,
+.pricing-popular-badge {
+  background: #4c1d95;
+}
+
+.revenue-card {
+  background: #4c1d95;
+}
+
+.landing-primary-btn:hover,
+.hero-btn-primary:hover {
+  background: #6d28d9;
+  filter: none;
+}
+
+/* ---------- Section bands (dark) ---------- */
+html[data-theme='dark'] .landing-hero-section {
+  background: transparent;
+}
+
+html[data-theme='dark'] .landing-features-overlay {
+  background: rgba(18, 13, 36, 0.92) !important;
+}
+
+html[data-theme='dark'] .landing-pricing-section {
+  background: #0c0719;
+}
+
+html[data-theme='dark'] .landing-faq-section {
+  background: #120d24;
+}
+
+html[data-theme='dark'] .landing-features-section,
+html[data-theme='dark'] .landing-pricing-section,
+html[data-theme='dark'] .landing-faq-section {
+  border-top-color: rgba(168, 85, 247, 0.15);
+}
+
+html[data-theme='dark'] .landing-cta-banner {
+  background: #2e1065 !important;
+}
+
+html[data-theme='dark'] .revenue-card {
+  background: #1a0f30 !important;
+}
+
+html[data-theme='dark'] .landing-primary-btn,
+html[data-theme='dark'] .hero-btn-primary {
+  background: #7c3aed !important;
+}
+
+html[data-theme='dark'] .landing-primary-btn:hover,
+html[data-theme='dark'] .hero-btn-primary:hover {
+  background: #6d28d9 !important;
+}
+
+/* ---------- FAQ: questions left, image right ---------- */
+.faq-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .faq-layout {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 64px;
+  }
+}
+
+.section-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7c3aed;
+  background: #ede9fe;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.faq-content .faq-title {
+  text-align: left;
+  margin: 0 0 24px;
+}
+
+.faq-visual {
+  position: relative;
+  display: none; /* hidden on small screens */
+  align-items: center;
+  justify-content: center;
+}
+
+.faq-visual-blob {
+  position: absolute;
+  width: 80%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-color: #ede9fe;
+  z-index: 0;
+}
+
+.faq-visual-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+}
+
+@media (min-width: 900px) {
+  .faq-visual {
+    display: flex;
+  }
+
+  .faq-visual-img {
+    max-width: 340px;
+  }
+}
+
+html[data-theme='dark'] .section-eyebrow {
+  color: #d8b4fe;
+  background: rgba(168, 85, 247, 0.15);
+}
+
+html[data-theme='dark'] .faq-visual-blob {
+  background-color: rgba(168, 85, 247, 0.18);
+}
+
+/* ---------- Start Free button (solid) ---------- */
+.landing-page .btn-start-free {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #c026d3;
+  box-shadow: 0 8px 20px -4px rgba(192, 38, 211, 0.5);
+  outline: 2px solid rgba(192, 38, 211, 0.5);
+  outline-offset: 0;
+  animation: startFreePulse 2.4s ease-out infinite;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  .landing-page .btn-start-free.compact {
+    padding: 10px 22px;
+  }
+}
+
+.landing-page .btn-start-free:hover {
+  background: #a21caf;
+  transform: translateY(-2px) scale(1.03);
+  filter: none;
+}
+
+.btn-start-free-arrow {
+  transition: transform 0.2s ease;
+}
+
+.landing-page .btn-start-free:hover .btn-start-free-arrow {
+  transform: translateX(3px);
+}
+
+.landing-page .btn-start-free:focus-visible {
+  animation: none;
+  outline: 3px solid #f0abfc;
+  outline-offset: 3px;
+}
+
+/* gold variant — CTA banner */
+.landing-page .btn-start-free--gold {
+  color: #3b0764;
+  font-size: 16px;
+  padding: 14px 34px;
+  background: #facc15;
+  box-shadow: 0 10px 26px -6px rgba(250, 204, 21, 0.55);
+  outline-color: rgba(250, 204, 21, 0.6);
+  animation-name: startFreePulseGold;
+}
+
+.landing-page .btn-start-free--gold:hover {
+  background: #eab308;
+}
+
+/* dark mode */
+html[data-theme='dark'] .landing-page .btn-start-free {
+  background: #d946ef !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(217, 70, 239, 0.5) !important;
+}
+
+html[data-theme='dark'] .landing-page .btn-start-free:hover {
+  background: #c026d3 !important;
+}
+
+html[data-theme='dark'] .landing-page .btn-start-free--gold {
+  background: #facc15 !important;
+  color: #3b0764 !important;
+  box-shadow: 0 0 24px rgba(250, 204, 21, 0.4) !important;
+}
+
+html[data-theme='dark'] .landing-page .btn-start-free--gold:hover {
+  background: #eab308 !important;
+}
+
+@keyframes startFreePulse {
+  0%   { outline-offset: 0;   outline-color: rgba(192, 38, 211, 0.55); }
+  70%  { outline-offset: 7px; outline-color: rgba(192, 38, 211, 0); }
+  100% { outline-offset: 7px; outline-color: rgba(192, 38, 211, 0); }
+}
+
+@keyframes startFreePulseGold {
+  0%   { outline-offset: 0;   outline-color: rgba(250, 204, 21, 0.65); }
+  70%  { outline-offset: 8px; outline-color: rgba(250, 204, 21, 0); }
+  100% { outline-offset: 8px; outline-color: rgba(250, 204, 21, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .btn-start-free { animation: none; }
 }

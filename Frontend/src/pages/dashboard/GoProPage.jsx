@@ -215,12 +215,19 @@ export default function GoProPage() {
           </button>
 
           <div className="gopro-heading">
-            <h1>{isKm ? 'ក្លាយជា Pro' : 'Go Pro'}</h1>
-            <p>
-              {isKm
-                ? 'ជ្រើសរើសគម្រោងមួយ ដើម្បីដោះសោការបញ្ចូលគ្មានដែនកំណត់ និងការកត់ត្រាដោយសំឡេង។'
-                : 'Choose a plan to unlock unlimited entries and voice logging.'}
-            </p>
+            <div className="page-title-row">
+              <span className="page-icon-badge gold">
+                <Crown size={22} />
+              </span>
+              <div>
+                <h1>{isKm ? 'ក្លាយជា Pro' : 'Go Pro'}</h1>
+                <p>
+                  {isKm
+                    ? 'ជ្រើសរើសគម្រោងមួយ ដើម្បីដោះសោការបញ្ចូលគ្មានដែនកំណត់ និងការកត់ត្រាដោយសំឡេង។'
+                    : 'Choose a plan to unlock unlimited entries and voice logging.'}
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="gopro-hero">

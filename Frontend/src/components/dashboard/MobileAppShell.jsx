@@ -16,7 +16,7 @@ export default function MobileAppShell({ children, activeTab, showBottomNav = tr
       <aside className="dash-sidebar">
         <div>
           <div className="dash-sidebar-brand" onClick={() => navigate('/')}>
-            <div className="dash-brand-icon">K</div>
+           <img src="/logo-mascot.png" alt="KOTCHOMNOL" className="dash-brand-icon" />
             <span className="dash-brand-title">KOTCHOMNOL</span>
           </div>
 

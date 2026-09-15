@@ -283,6 +283,56 @@ html[data-theme='dark'] .khr-text {
   color: #c084fc !important;
 }
 
+/* Riel / Dollar totals — two side-by-side grid blocks */
+.totals-currency-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.totals-currency-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+}
+
+.totals-currency-block .totals-label {
+  font-size: 12px;
+}
+
+.totals-currency-block .totals-value {
+  font-size: 20px;
+}
+
+.totals-currency-block.khr-block {
+  background-color: rgba(126, 34, 206, 0.06);
+  border-color: rgba(126, 34, 206, 0.18);
+}
+
+.totals-currency-block.usd-block {
+  background-color: rgba(21, 128, 61, 0.06);
+  border-color: rgba(21, 128, 61, 0.18);
+}
+
+html[data-theme='dark'] .totals-currency-block.khr-block {
+  background-color: rgba(168, 85, 247, 0.1);
+  border-color: rgba(168, 85, 247, 0.25);
+}
+
+html[data-theme='dark'] .totals-currency-block.usd-block {
+  background-color: rgba(52, 211, 153, 0.1);
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+@media (max-width: 380px) {
+  .totals-currency-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Action Buttons */
 .review-screen-actions {
   display: flex;

@@ -47,12 +47,10 @@ html[data-theme='dark'] .dash-sidebar {
 }
 
 .dash-brand-icon {
-  background-color: #ffffff;
-  color: #581c87;
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .dash-brand-title {

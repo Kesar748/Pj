@@ -31,7 +31,7 @@ import { normalizeReviewItem, resolveCurrency, resolveSaleDate, resolveUnitPrice
 import './VoiceScreen.css';
 
 const DRAFT_KEY = 'kc_add_sale_draft';
-const emptyManualItem = { description: '', quantity: '1', unit_price: '', currency: getPreferredCurrency() || 'KHR' };
+const emptyManualItem = { description: '', quantity: '0', unit_price: '', currency: getPreferredCurrency() || 'KHR' };
 
 const extractErrorMessage = (err, fallback) => {
   const detail = err?.response?.data?.detail;
@@ -560,7 +560,7 @@ export default function VoiceScreen() {
 
                 <button type="submit" className="add-to-invoice-btn">
                   <Plus size={16} />
-                  <span>{isKm ? 'បន្ថែមទៅវិក្កយបត្រព្រាង' : 'Add to Draft Invoice'}</span>
+                  <span>{isKm ? 'បន្ថែមទៅវិក្កយបត្រ' : 'Add to Invoice'}</span>
                 </button>
               </form>
             </div>
@@ -683,7 +683,6 @@ export default function VoiceScreen() {
           <div className="entry-card draft-card">
             <div>
               <div className="draft-header">
-                <h3 className="card-section-title">{isKm ? 'វិក្កយបត្រព្រាង' : 'Sale Draft'}</h3>
                 <span className="draft-count-pill">
                   {draftItems.length} {isKm ? 'មុខទំនិញ' : 'items'}
                 </span>

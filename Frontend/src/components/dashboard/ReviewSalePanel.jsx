@@ -128,13 +128,17 @@ export default function ReviewSalePanel({
           <span className="totals-label">{t('totalItems') || 'Total Items'}</span>
           <span className="totals-value">{visibleItems.length}</span>
         </div>
-        <div className="totals-row-item">
-          <span className="totals-label">{t('totalUsdLabel') || 'Total (USD)'}</span>
-          <strong className="totals-value usd-text">${totals.totalUSD.toFixed(2)}</strong>
-        </div>
-        <div className="totals-row-item">
-          <span className="totals-label">{t('totalKhrLabel') || 'Total (KHR)'}</span>
-          <strong className="totals-value khr-text">{Math.round(totals.totalKHR).toLocaleString()} KHR</strong>
+
+        {/* Riel and Dollar totals as two separate grid blocks side by side */}
+        <div className="totals-currency-grid">
+          <div className="totals-currency-block khr-block">
+            <span className="totals-label">{t('totalKhrLabel') || 'Total (KHR)'}</span>
+            <strong className="totals-value khr-text">{Math.round(totals.totalKHR).toLocaleString()} KHR</strong>
+          </div>
+          <div className="totals-currency-block usd-block">
+            <span className="totals-label">{t('totalUsdLabel') || 'Total (USD)'}</span>
+            <strong className="totals-value usd-text">${totals.totalUSD.toFixed(2)}</strong>
+          </div>
         </div>
       </section>
 

@@ -178,22 +178,6 @@ export default function ProfileScreen() {
   return (
     <MobileAppShell activeTab="profile" showBottomNav={true}>
       <div className="settings-page-wrapper">
-        {mobileView === 'account_details' && (
-          <div className="settings-topbar mobile-only-bar">
-            <button 
-              className="settings-back-btn" 
-              type="button" 
-              onClick={() => {
-                setMobileView('menu');
-                setIsEditing(false);
-              }}
-            >
-              <ArrowLeft size={18} />
-              <span>{t('menu') || (isKm ? 'ម៉ឺនុយ' : 'Menu')}</span>
-            </button>
-          </div>
-        )}
-
         <div className="settings-layout">
           {/* MENU CARD */}
           <aside className={`settings-sidebar ${mobileView === 'menu' ? 'mobile-visible' : 'mobile-hidden'}`}>
@@ -233,7 +217,7 @@ export default function ProfileScreen() {
 
               <button 
                 type="button" 
-                className="settings-nav-item"
+                className={`settings-nav-item ${mobileView === 'account_details' ? 'active' : ''}`}
                 onClick={() => setMobileView('account_details')}
               >
                 <User size={18} />

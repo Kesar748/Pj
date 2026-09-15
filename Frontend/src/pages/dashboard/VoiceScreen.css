@@ -510,7 +510,7 @@ html[data-theme='dark'] .currency-pill.active {
 
 .draft-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 

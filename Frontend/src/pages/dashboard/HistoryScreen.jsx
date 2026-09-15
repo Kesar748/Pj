@@ -181,6 +181,37 @@ export default function HistoryScreen() {
     };
   }, [sales, period, isKm]);
 
+  // Precompute pixel-accurate points for the SVG line chart.
+  // Everything (line, dots, value labels, day labels) is drawn in the
+  // SAME coordinate system, so nothing can ever drift out of alignment.
+  const chartPoints = useMemo(() => {
+    const width = 700;
+    const height = 260;
+    const padX = 34;
+    const top = 36;
+    const bottom = height - 46;
+
+    const values = weeklyBars.map((b) => b.value);
+    const maxVal = Math.max(...values, 1);
+    const stepX = weeklyBars.length > 1 ? (width - padX * 2) / (weeklyBars.length - 1) : 0;
+
+    const points = weeklyBars.map((b, i) => ({
+      ...b,
+      x: padX + i * stepX,
+      y: bottom - (b.value / maxVal) * (bottom - top),
+    }));
+
+    const linePath = points
+      .map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+      .join(' ');
+
+    const areaPath = points.length
+      ? `${linePath} L${points[points.length - 1].x.toFixed(1)},${bottom} L${points[0].x.toFixed(1)},${bottom} Z`
+      : '';
+
+    return { points, linePath, areaPath, width, height, top, bottom };
+  }, [weeklyBars]);
+
   return (
     <MobileAppShell activeTab="history">
       <div className="analytics-page-wrapper font-kantumruy">
@@ -222,6 +253,7 @@ export default function HistoryScreen() {
         </div>
 
         {/* 4-Column Stat Cards */}
+        {/* Add " variant-bold" to this className to switch to Style B (bold gradient cards) */}
         <div className="analytics-four-grid">
           <div className="stat-tile-card">
             <div className="stat-icon-wrap violet">
@@ -266,7 +298,7 @@ export default function HistoryScreen() {
 
         {/* Analytics Charts & Summaries */}
         <div className="analytics-sections-grid">
-          {/* Revenue Bar Visualizer */}
+          {/* Revenue Line Chart */}
           <div className="chart-card">
             <div className="chart-card-header">
               <div className="chart-header-left">
@@ -276,19 +308,68 @@ export default function HistoryScreen() {
               <span className="chart-badge">{isKm ? 'សប្តាហ៍នេះ' : 'This Week'}</span>
             </div>
 
-            <div className="bar-chart-container">
-              {weeklyBars.map((bar, idx) => (
-                <div key={idx} className="bar-column">
-                  <span className="bar-value-tooltip">${bar.value.toFixed(1)}</span>
-                  <div className="bar-track">
-                    <div 
-                      className="bar-fill" 
-                      style={{ height: bar.value > 0 ? `${bar.percent}%` : '4px' }} 
+            <div className="line-chart-wrap">
+              <svg
+                viewBox={`0 0 ${chartPoints.width} ${chartPoints.height}`}
+                preserveAspectRatio="none"
+                className="line-chart-svg"
+              >
+                <defs>
+                  <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#9333ea" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#9333ea" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+
+                {/* Grid lines */}
+                {[0, 1, 2, 3].map((i) => {
+                  const y = chartPoints.top + (i * (chartPoints.bottom - chartPoints.top)) / 3;
+                  return (
+                    <line
+                      key={i}
+                      x1={20}
+                      x2={chartPoints.width - 20}
+                      y1={y}
+                      y2={y}
+                      className="chart-grid-line"
                     />
-                  </div>
-                  <span className="bar-label">{bar.label}</span>
-                </div>
-              ))}
+                  );
+                })}
+
+                {/* Area + line */}
+                <path d={chartPoints.areaPath} fill="url(#revenueFill)" />
+                <path
+                  d={chartPoints.linePath}
+                  fill="none"
+                  stroke="#7e22ce"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {/* Points + labels — same coordinate system as the line, so they always align */}
+                {chartPoints.points.map((p, idx) => (
+                  <g key={idx}>
+                    <circle cx={p.x} cy={p.y} r="5" className="chart-point" />
+                    <text
+                      x={p.x}
+                      y={Math.max(14, p.y - 14)}
+                      textAnchor="middle"
+                      className="chart-point-value"
+                    >
+                      ${p.value.toFixed(1)}
+                    </text>
+                    <text
+                      x={p.x}
+                      y={chartPoints.height - 12}
+                      textAnchor="middle"
+                      className="chart-point-day"
+                    >
+                      {p.label}
+                    </text>
+                  </g>
+                ))}
+              </svg>
             </div>
           </div>
 

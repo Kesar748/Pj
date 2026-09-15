@@ -8,7 +8,8 @@ import {
   FileText, 
   Download, 
   Image as ImageIcon, 
-  FileDown 
+  FileDown,
+  Coins
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
@@ -283,6 +284,11 @@ export default function TransactionsScreen() {
           </button>
         )}
         <h2 className="tx-page-title">
+          {!selectedSale && (
+            <span className="tx-title-icon-badge">
+              <FileText size={18} />
+            </span>
+          )}
           {selectedSale
             ? isKm
               ? 'ព័ត៌មានលម្អិត'
@@ -308,22 +314,24 @@ export default function TransactionsScreen() {
         />
       ) : (
         <div className="sales-records-container">
-          <div className="records-summary-card">
-            <div className="records-summary-header">
-              <span>{isKm ? 'សរុបតាមការជ្រើសរើស' : 'Filtered Sales Total'}</span>
-              <span className="records-count-pill">
-                {filteredSales.length} {isKm ? 'ការលក់' : 'records'}
+          <div className="records-summary-header-row">
+            <span className="records-summary-title">{isKm ? 'សរុបតាមការជ្រើសរើស' : 'Filtered Sales Total'}</span>
+            <span className="records-count-pill">
+              {filteredSales.length} {isKm ? 'ការលក់' : 'records'}
+            </span>
+          </div>
+
+          <div className="records-summary-cards-grid">
+            <div className="records-summary-card khr-summary-card">
+              <span className="summary-currency-label">
+                <Coins size={13} className="summary-khr-icon" />
+                KHR
               </span>
+              <span className="summary-khr-value">{Math.round(totalKHR).toLocaleString()} KHR</span>
             </div>
-            <div className="records-amounts-row">
-              <div>
-                <span className="summary-currency-label">USD</span>
-                <span className="summary-usd-value">${totalUSD.toFixed(2)}</span>
-              </div>
-              <div>
-                <span className="summary-currency-label">KHR</span>
-                <span className="summary-khr-value">{Math.round(totalKHR).toLocaleString()} KHR</span>
-              </div>
+            <div className="records-summary-card usd-summary-card">
+              <span className="summary-currency-label">USD</span>
+              <span className="summary-usd-value">${totalUSD.toFixed(2)}</span>
             </div>
           </div>
 

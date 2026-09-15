@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Mic, BarChart3, ShieldCheck, Menu, X, Check, Mail, ChevronDown } from 'lucide-react';
+import { Sun, Moon, Mic, BarChart3, ShieldCheck, Menu, X, Check, Mail, ChevronDown, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -12,6 +12,7 @@ import {
 } from '../services/paymentService';
 import './LandingPage.css';
 import './dashboard/GoProPage.css';
+import faqIllustration from '../assets/image 1.png';
 
 const POLL_INTERVAL_MS = 4000;
 
@@ -399,14 +400,19 @@ export default function LandingPage() {
               >
                 {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               </button>
-
               <button 
                 type="button" 
                 className="landing-lang-btn" 
                 onClick={toggleLanguage}
                 aria-label="Toggle language"
               >
-                {language === 'en' ? 'KM' : 'EN'}
+                <img
+                  src={language === 'en' ? 'https://flagcdn.com/w40/gb.png' : 'https://flagcdn.com/w40/kh.png'}
+                  alt={language === 'en' ? 'Khmer' : 'English'}
+                  width="22"
+                  height="16"
+                  style={{ borderRadius: '3px', objectFit: 'cover', display: 'block' }}
+                />
               </button>
             </div>
 
@@ -431,10 +437,11 @@ export default function LandingPage() {
                   </button>
                   <button 
                     type="button" 
-                    className="landing-primary-btn compact" 
+                    className="landing-primary-btn compact btn-start-free" 
                     onClick={() => navigate('/register')}
                   >
-                    {txt.navStartFree}
+                    <span>{txt.navStartFree}</span>
+                    <ArrowRight size={16} className="btn-start-free-arrow" />
                   </button>
                 </>
               )}
@@ -694,29 +701,41 @@ export default function LandingPage() {
 
       {/* FAQ Section */}
       <section id="faq" className="landing-faq-section">
-        <div className="faq-container">
-          <h2 className="faq-title">{txt.faqTitle}</h2>
+        <div className="landing-container">
+          <div className="faq-layout">
+            {/* Left: questions */}
+            <div className="faq-content">
+              <span className="section-eyebrow">FAQ</span>
+              <h2 className="faq-title">{txt.faqTitle}</h2>
 
-          <div className="faq-accordion">
-            {faqItems.map((item, index) => {
-              const isOpen = openFaqIndex === index;
-              return (
-                <div key={index} className={`faq-accordion-item ${isOpen ? 'open' : ''}`}>
-                  <button
-                    type="button"
-                    className="faq-accordion-trigger"
-                    onClick={() => setOpenFaqIndex(isOpen ? -1 : index)}
-                    aria-expanded={isOpen}
-                  >
-                    <span>{item.q}</span>
-                    <ChevronDown size={18} className="faq-accordion-chevron" />
-                  </button>
-                  <div className="faq-accordion-panel">
-                    <p>{item.a}</p>
-                  </div>
-                </div>
-              );
-            })}
+              <div className="faq-accordion">
+                {faqItems.map((item, index) => {
+                  const isOpen = openFaqIndex === index;
+                  return (
+                    <div key={index} className={`faq-accordion-item ${isOpen ? 'open' : ''}`}>
+                      <button
+                        type="button"
+                        className="faq-accordion-trigger"
+                        onClick={() => setOpenFaqIndex(isOpen ? -1 : index)}
+                        aria-expanded={isOpen}
+                      >
+                        <span>{item.q}</span>
+                        <ChevronDown size={18} className="faq-accordion-chevron" />
+                      </button>
+                      <div className="faq-accordion-panel">
+                        <p>{item.a}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right: image */}
+            <div className="faq-visual" aria-hidden="true">
+              <div className="faq-visual-blob" />
+              <img src={faqIllustration} alt="" className="faq-visual-img" loading="lazy" />
+            </div>
           </div>
         </div>
       </section>
@@ -728,10 +747,11 @@ export default function LandingPage() {
           <p>{txt.ctaDesc}</p>
           <button 
             type="button" 
-            className="cta-white-btn" 
+            className="cta-white-btn btn-start-free btn-start-free--gold" 
             onClick={() => navigate(isLoggedIn ? '/dashboard/voice' : '/register')}
           >
-            {txt.ctaBtn}
+            <span>{txt.ctaBtn}</span>
+            <ArrowRight size={18} className="btn-start-free-arrow" />
           </button>
         </div>
       </section>

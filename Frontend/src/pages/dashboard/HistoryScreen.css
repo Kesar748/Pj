@@ -88,6 +88,8 @@ html[data-theme='dark'] .analytics-title {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* ===== Style A: Soft card (default) ===== */
 .stat-tile-card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -97,7 +99,7 @@ html[data-theme='dark'] .analytics-title {
   align-items: center;
   gap: 16px;
   box-shadow: 0 12px 30px -4px rgba(126, 34, 206, 0.08), 0 4px 12px rgba(126, 34, 206, 0.04);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .stat-tile-card:hover {
@@ -180,6 +182,45 @@ html[data-theme='dark'] .text-emerald {
   color: #34d399 !important;
 }
 
+/* ===== Style B: Bold gradient card ===== */
+/* Enable by adding "variant-bold" to the .analytics-four-grid className in the JSX */
+.analytics-four-grid.variant-bold .stat-tile-card {
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 14px 30px -6px rgba(0, 0, 0, 0.18);
+}
+
+.analytics-four-grid.variant-bold .stat-tile-card:nth-child(1) {
+  background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%);
+}
+.analytics-four-grid.variant-bold .stat-tile-card:nth-child(2) {
+  background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+}
+.analytics-four-grid.variant-bold .stat-tile-card:nth-child(3) {
+  background: linear-gradient(135deg, #d97706 0%, #fbbf24 100%);
+}
+.analytics-four-grid.variant-bold .stat-tile-card:nth-child(4) {
+  background: linear-gradient(135deg, #059669 0%, #34d399 100%);
+}
+
+.analytics-four-grid.variant-bold .stat-icon-wrap {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.analytics-four-grid.variant-bold .stat-tile-label,
+.analytics-four-grid.variant-bold .stat-tile-val,
+.analytics-four-grid.variant-bold .text-amber,
+.analytics-four-grid.variant-bold .text-emerald {
+  color: #ffffff !important;
+}
+
+.analytics-four-grid.variant-bold .stat-tile-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  border-color: transparent;
+}
+
 /* Charts Grid */
 .analytics-sections-grid {
   display: grid;
@@ -259,53 +300,52 @@ html[data-theme='dark'] .chart-card-header h3 {
   font-weight: 600;
 }
 
-/* Bar Chart Visualizer */
-.bar-chart-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  height: 200px;
-  padding-top: 20px;
-  gap: 10px;
-}
-
-.bar-column {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-}
-
-.bar-value-tooltip {
-  font-size: 10px;
-  color: var(--color-text-muted);
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.bar-track {
-  flex: 1;
-  width: 22px;
-  background-color: rgba(126, 34, 206, 0.07);
-  border-radius: 8px;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-}
-
-.bar-fill {
+/* Revenue Line Chart */
+.line-chart-wrap {
   width: 100%;
-  background: linear-gradient(180deg, #9333ea 0%, #7e22ce 100%);
-  border-radius: 8px;
-  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.bar-label {
+.line-chart-svg {
+  width: 100%;
+  height: 240px;
+  overflow: visible;
+  display: block;
+}
+
+.chart-grid-line {
+  stroke: rgba(126, 34, 206, 0.08);
+  stroke-width: 1;
+}
+
+html[data-theme='dark'] .chart-grid-line {
+  stroke: rgba(255, 255, 255, 0.06);
+}
+
+.chart-point {
+  fill: #ffffff;
+  stroke: #7e22ce;
+  stroke-width: 3;
+}
+
+html[data-theme='dark'] .chart-point {
+  fill: #111827;
+  stroke: #a855f7;
+}
+
+.chart-point-value {
   font-size: 11px;
-  color: var(--color-text-muted);
-  margin-top: 8px;
+  font-weight: 700;
+  fill: #7e22ce;
+}
+
+html[data-theme='dark'] .chart-point-value {
+  fill: #c084fc;
+}
+
+.chart-point-day {
+  font-size: 11px;
   font-weight: 600;
+  fill: var(--color-text-muted);
 }
 
 /* Product Share List */
